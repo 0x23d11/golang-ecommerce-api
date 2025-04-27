@@ -6,12 +6,25 @@ import (
 	"net/http"
 
 	"github.com/0x23d11/go-ecommerce-project/internal/config"
+	"github.com/0x23d11/go-ecommerce-project/internal/database"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	// load configuration
 	cfg := config.LoadConfig()
+
+	// initialize database connections
+	dbConnections, err := database.InitDatabaseConnections(cfg)
+	if err != nil {
+		log.Fatalf("Failed to initialize database connections: %v", err)
+	}
+
+	// defer closing database connections when main function exits
+	defer database.CloseDatabaseConnections(dbConnections)
+
+	log.Printf("Postgres Connection: %p", dbConnections.Postgres)
+	log.Printf("Mongo Connection: %p", dbConnections.Mongo)
 
 	// initialize gin router with default middleware
 	router := gin.Default()
