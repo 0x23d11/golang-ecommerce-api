@@ -1,13 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/0x23d11/go-ecommerce-project/internal/config"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	// load configuration
+	cfg := config.LoadConfig()
+
 	// initialize gin router with default middleware
 	router := gin.Default()
 
@@ -20,8 +25,9 @@ func main() {
 	})
 
 	// start the server on port 8080
-	log.Println("Server is running on port 8080")
-	if err := router.Run(":8080"); err != nil {
+	serverAddress := fmt.Sprintf(":%s", cfg.ServerPort)
+	log.Printf("Server is running on port %s...", serverAddress)
+	if err := router.Run(serverAddress); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
